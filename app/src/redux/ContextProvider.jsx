@@ -4,7 +4,7 @@ import Context from "./Context";
 
 const ContextProvider = (props) => {
     const [getCount, setGetCount] = useState(() => {
-            return JSON.parse(localStorage.getItem("orderCount") || 0);
+        return JSON.parse(localStorage.getItem("orderCount") || 0);
     });
 
     const updateCount = () => {
@@ -19,15 +19,22 @@ const ContextProvider = (props) => {
             setGetCount(newCount);
             localStorage.setItem("orderCount", JSON.stringify(newCount));
         }
-    }
-
-
-        return (
-            <Context.Provider value={{ getCount, updateCount, setGetCount ,removeItem}}>
-                {props.children}
-            </Context.Provider>
-        );
     };
 
-    export default ContextProvider;
+    // const removeItem = () => {
+    //     setGetCount((prevCount) => {
+    //         const newCount = Math.max(prevCount - 1, 0); // Prevent negative count
+    //         localStorage.setItem("orderCount", JSON.stringify(newCount));
+    //         return newCount;
+    //     });
+    // };
+
+    return (
+        <Context.Provider value={{ getCount, updateCount, setGetCount, removeItem }}>
+            {props.children}
+        </Context.Provider>
+    );
+};
+
+export default ContextProvider;
 

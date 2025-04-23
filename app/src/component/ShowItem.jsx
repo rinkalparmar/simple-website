@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import { useContext } from 'react';//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+import Context from '../redux/Context';//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 
 function ShowItem() {
   const [items, setItems] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
+
+
+  const { removeItem: updateCartCount } = useContext(Context);//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@rename the removeItem to updateCartCount
 
   useEffect(() => {
     const logindata = JSON.parse(localStorage.getItem("logindata"));
@@ -28,7 +34,7 @@ function ShowItem() {
     console.log("remove", removeCount);
     const removeitem = removeCount - 1;
 
-    
+
 
     if (userEmail) {
       const userOrders = JSON.parse(localStorage.getItem(`orders_${userEmail}`)) || [];
@@ -39,6 +45,7 @@ function ShowItem() {
       // console.log("object", findId);
 
       localStorage.setItem(`orders_${userEmail}`, JSON.stringify(findId));
+      updateCartCount(); //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
       localStorage.setItem("orderCount", JSON.stringify(removeitem));
 
