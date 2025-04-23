@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import hero from '../assets/hero1.avif';
 import Footer from './Footer';
 
@@ -19,7 +19,6 @@ function Contact() {
         localStorage.setItem("responce", JSON.stringify(allData));
         setData({ email: "", msg: "" });
     };
-
 
     return (
         <>
@@ -51,7 +50,7 @@ function Contact() {
                     </form>
                 </div>
             </div>
-            <Footer/>
+            <Footer />
         </>
     );
 }

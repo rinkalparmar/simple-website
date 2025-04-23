@@ -6,11 +6,23 @@ import { BsCartCheck } from "react-icons/bs";
 import { Link } from 'react-router-dom';
 import { useContext } from 'react';
 import Context from '../redux/Context';
+import { useNavigate } from 'react-router-dom';
 
 function NavbarMain() {
 
+    const checkUser = JSON.parse(localStorage.getItem("isAuthenticate"));
+    console.log(checkUser);
+    const { getCount, setGetCount, removeItem} = useContext(Context);
 
-    const { getCount } = useContext(Context);
+    console.log("............", getCount);
+    const navigate = useNavigate();
+
+    const Logout = () => {
+        localStorage.removeItem("isAuthenticate");
+        localStorage.removeItem("logindata");
+        navigate("/home");
+        setGetCount(0);
+    };
 
     return (
         <Navbar expand="lg" className="bg-dark fixed-top" style={{ height: '50px' }}>
@@ -32,11 +44,24 @@ function NavbarMain() {
 
                     </Nav>
                 </Navbar.Collapse>
-                <div className='relative mx-4'>
-                    <p className='absolute right-[-10px] top-[-10px] w-4 text-center leading-4 bg-red-700 text-white aspect-square rounded-full text-[10px]'>{getCount}</p>
-                    <BsCartCheck style={{ backgroundColor: "white", height: "30px", width: "30px", float: "right" }} />
-                </div>
-                <button className='btn btn-success'>Login</button>
+                {
+                    checkUser ? <>
+                        <div className='relative mx-4'>
+                            <p className='absolute right-[-10px] top-[-10px] w-4 text-center leading-4 bg-red-700 text-white aspect-square rounded-full text-[10px]'>
+                                {getCount}
+                            </p>
+                            <BsCartCheck style={{ backgroundColor: "white", height: "30px", width: "30px", float: "right" }} onClick={() => navigate("showItem")} />
+                        </div>
+                        <button className='btn btn-success' onClick={Logout}>LogOut</button>
+                    </>
+                        : <>
+                            <div className='relative mx-4'>
+                                <p className='absolute right-[-10px] top-[-10px] w-4 text-center leading-4 bg-red-700 text-white aspect-square rounded-full text-[10px]'>{getCount}</p>
+                                <BsCartCheck style={{ backgroundColor: "white", height: "30px", width: "30px", float: "right" }} />
+                            </div>
+                            <button className='btn btn-success' onClick={() => navigate("/login")}>Login</button>
+                        </>
+                }
             </Container>
         </Navbar>
     );

@@ -6,6 +6,9 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import Menu from './pages/Menu';
 import Footer from './pages/Footer';
+import Login from './component/Login';
+import SignUp from './component/SignUp';
+import ShowItem from './component/showItem';
 
 function App() {
   return (
@@ -18,6 +21,10 @@ function App() {
         <Route path="contact" element={<Contact />} />
         <Route path="menu" element={<Menu />} />
         <Route path="footer" element={<Footer />} />
+        <Route path="login" element={<Login />} />
+        <Route path="signup" element={<SignUp />} />
+        <Route path="ShowItem" element={<ShowItem/>} />
+
       </Routes>
     </>
   );
