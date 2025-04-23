@@ -4,23 +4,18 @@ import Navbar from 'react-bootstrap/Navbar';
 import logo from '../assets/logo.jpg';
 import { BsCartCheck } from "react-icons/bs";
 import { Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useContext } from 'react';
+import Context from '../redux/Context';
 
 function NavbarMain() {
 
-    const [getCount, setGetCount] = useState(0);
 
-    useEffect(() => {
-        const count = JSON.parse(localStorage.getItem("orderCount"));
-        console.log("getCount", count);
-        setGetCount(count);
-    }, []);
-
+    const { getCount } = useContext(Context);
 
     return (
         <Navbar expand="lg" className="bg-dark fixed-top" style={{ height: '50px' }}>
             <Container fluid className='mx-5'>
-                <Navbar.Brand href="home" className='text-white'>
+                <Navbar.Brand to="home" className='text-white'>
                     <img src={logo} alt="" height="50px" width="50px" />
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="navbarScroll" className='bg-white' />
@@ -30,17 +25,18 @@ function NavbarMain() {
                         style={{ maxHeight: '100px' }}
                         navbarScroll
                     >
-                        <Nav.Link href="/home" className='text-white '>Home</Nav.Link>
-                        <Nav.Link href="/about" className='text-white'>About</Nav.Link>
-                        <Nav.Link href="/contact" className='text-white'>Contact</Nav.Link>
-                        <Nav.Link href="/menu" className='text-white'>Menu</Nav.Link>
+                        <Link to="/home" className='text-white !no-underline'>Home</Link>
+                        <Link to="/about" className='text-white !no-underline'>About</Link>
+                        <Link to="/contact" className='text-white !no-underline'>Contact</Link>
+                        <Link to="/menu" className='text-white !no-underline' >Menu</Link>
 
                     </Nav>
                 </Navbar.Collapse>
-                <div className='relative'>
+                <div className='relative mx-4'>
                     <p className='absolute right-[-10px] top-[-10px] w-4 text-center leading-4 bg-red-700 text-white aspect-square rounded-full text-[10px]'>{getCount}</p>
                     <BsCartCheck style={{ backgroundColor: "white", height: "30px", width: "30px", float: "right" }} />
                 </div>
+                <button className='btn btn-success'>Login</button>
             </Container>
         </Navbar>
     );

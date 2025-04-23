@@ -1,18 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { MenuList } from '../component/MenuList';
 import Button from "react-bootstrap/Button";
 import Card from 'react-bootstrap/Card';
+import Context from '../redux/Context';
+
 
 function Menu() {
-    const [addItem, setAddItem] = useState(0);
-    const addOrder = () => {
-        setAddItem(addItem + 1);
-        localStorage.setItem("orderCount", JSON.stringify(addItem + 1));
-    };
 
-
-
-    console.log("addItem", addItem);
+    const { updateCount } = useContext(Context);
     return (
         <>
             <h1 className='text-center' style={{ marginTop: "40px" }}>MenuList</h1>
@@ -28,7 +23,7 @@ function Menu() {
                                     <Card.Text>
                                         {item.description}
                                     </Card.Text>
-                                    <Button variant='success' onClick={addOrder}>Order</Button>
+                                    <Button variant='success' onClick={updateCount}>Order</Button>
                                 </Card.Body>
                             </Card>
                         </div>;
