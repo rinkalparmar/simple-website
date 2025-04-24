@@ -23,8 +23,8 @@ function Menu() {
 		userOrders.push(item);
 		// console.log("object", userOrders);
 		localStorage.setItem(`orders_${userEmail}`, JSON.stringify(userOrders));
-		setGetCount(userOrders);//displya total count of items
-		updateCount();
+		// setGetCount(userOrders);//displya total count of items
+		updateCount(userOrders);
 	};
 
 	return (

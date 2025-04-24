@@ -12,7 +12,7 @@ function NavbarMain() {
 
     const checkUser = JSON.parse(localStorage.getItem("isAuthenticate"));
     console.log(checkUser);
-    const { getCount, setGetCount, removeItem} = useContext(Context);
+    const { getCount, setGetCount} = useContext(Context);
 
     console.log("............", getCount);
     const navigate = useNavigate();

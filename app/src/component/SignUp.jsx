@@ -6,7 +6,8 @@ import Container from 'react-bootstrap/esm/Container';
 import { useDispatch } from 'react-redux';
 import { signup, setErrors } from '../store/authSlice';
 import { useSelector } from 'react-redux';
-
+import { useContext } from 'react';
+import Context from '../redux/Context';
 
 
 function SignUp() {
@@ -18,6 +19,10 @@ function SignUp() {
     const errors = useSelector((state) => state.user.errors);
     console.log("users", users);
     console.log("error", errors);
+
+
+    const { setGetCount } = useContext(Context);
+
 
 
     const nameFormate = (name) => {
@@ -65,6 +70,8 @@ function SignUp() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
+
+        setGetCount(0);//@@@@@@@@@@
 
         const checkUser = users.find((user) => { if (user.email === data.email) { return user; } });
         console.log("checkUser", checkUser);

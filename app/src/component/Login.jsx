@@ -38,7 +38,7 @@ function Login() {
         dispatch(login(true));
         localStorage.setItem("logindata", JSON.stringify(input));
 
-        const savedOrders = JSON.parse(localStorage.getItem(`orders_${input.email}`)) || []; //@@@@@@@
+        const savedOrders = JSON.parse(localStorage.getItem(`orders_${input.email}`)) || []; //@@@@@@@ set in menu files
         setGetCount(savedOrders.length);//@@@@@@@
 
         navigate("/home");

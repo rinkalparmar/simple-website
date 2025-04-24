@@ -21,14 +21,6 @@ const ContextProvider = (props) => {
         }
     };
 
-    // const removeItem = () => {
-    //     setGetCount((prevCount) => {
-    //         const newCount = Math.max(prevCount - 1, 0); // Prevent negative count
-    //         localStorage.setItem("orderCount", JSON.stringify(newCount));
-    //         return newCount;
-    //     });
-    // };
-
     return (
         <Context.Provider value={{ getCount, updateCount, setGetCount, removeItem }}>
             {props.children}
