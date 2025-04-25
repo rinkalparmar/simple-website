@@ -8,7 +8,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { login, setErrors } from '../store/authSlice';
 import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
-import Context from '../redux/Context';
 
 
 
@@ -23,7 +22,6 @@ function Login() {
     console.log("users", users);
     console.log("error", errors);
 
-    const { setGetCount, countDisplay } = useContext(Context); //@@@@@@@
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -36,15 +34,10 @@ function Login() {
             return;
         }
         dispatch(login(true));
-        // localStorage.setItem("logindata", JSON.stringify(input));
         localStorage.setItem("loginData", JSON.stringify(findUser));
         localStorage.setItem("isAuthenticate", true);
 
-        const savedOrders = JSON.parse(localStorage.getItem(`cartData`)) || []; //@@@@@@@ set in menu files
-        setGetCount(savedOrders);//@@@@@@@
 
-        countDisplay();
-        // setGetCount(0);
 
         navigate("/home");
         dispatch(setErrors(null));

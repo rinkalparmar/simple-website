@@ -4,30 +4,40 @@ import Navbar from 'react-bootstrap/Navbar';
 import logo from '../assets/logo.jpg';
 import { BsCartCheck } from "react-icons/bs";
 import { Link } from 'react-router-dom';
-import { useContext } from 'react';
-import Context from '../redux/Context';
 import { useNavigate } from 'react-router-dom';
 import Dropdown from 'react-bootstrap/Dropdown';
 import { MdAccountCircle } from "react-icons/md";
 
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { setCount, updateCount } from "../store/cartSlice";
+
 function NavbarMain() {
+
+    const dispatch = useDispatch();
+    const countGet = useSelector((state) => state.cart.count);
+
+    console.log("countGet", countGet);
+    useEffect(() => {
+        dispatch(updateCount());//it used loging user count display so...
+    });
+
+
+
 
     const checkUser = JSON.parse(localStorage.getItem("isAuthenticate"));
     console.log(checkUser);
-    const { getCount, setGetCount } = useContext(Context);
 
     const loginData = JSON.parse(localStorage.getItem("loginData"));
     const name = loginData?.name;
-    console.log("name", name);
 
-    console.log("getCount............", getCount);
     const navigate = useNavigate();
 
     const Logout = () => {
         localStorage.removeItem("isAuthenticate");
-        localStorage.removeItem("logindata");
+        localStorage.removeItem("loginData");
+        dispatch(setCount(countGet));
         navigate("/home");
-        setGetCount(0);
     };
 
     return (
@@ -59,11 +69,12 @@ function NavbarMain() {
 
                             <Dropdown.Menu>
                                 <Dropdown.Item style={{ backgroundColor: "grey", color: "white" }}>hello {name}</Dropdown.Item>
+                                <Dropdown.Item style={{ backgroundColor: "grey", color: "white" }}>WellCome to Foody Zone</Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
                         <div className='relative mx-4'>
                             <p className='absolute right-[-10px] top-[-10px] w-4 text-center leading-4 bg-red-700 text-white aspect-square rounded-full text-[10px]'>
-                                {getCount}
+                                {countGet}
                             </p>
                             <BsCartCheck style={{ backgroundColor: "white", height: "30px", width: "30px", float: "right" }} onClick={() => navigate("showItem")} />
                         </div>
@@ -71,7 +82,7 @@ function NavbarMain() {
                     </>
                         : <>
                             <div className='relative mx-4'>
-                                <p className='absolute right-[-10px] top-[-10px] w-4 text-center leading-4 bg-red-700 text-white aspect-square rounded-full text-[10px]'>{getCount}</p>
+                                <p className='absolute right-[-10px] top-[-10px] w-4 text-center leading-4 bg-red-700 text-white aspect-square rounded-full text-[10px]'>{countGet}</p>
                                 <BsCartCheck style={{ backgroundColor: "white", height: "30px", width: "30px", float: "right" }} />
                             </div>
                             <button className='btn btn-success' onClick={() => navigate("/login")}>Login</button>

@@ -21,7 +21,7 @@ function SignUp() {
     console.log("error", errors);
 
 
-    const { setGetCount } = useContext(Context);
+    // const { setGetCount } = useContext(Context);
 
 
 
@@ -78,7 +78,7 @@ function SignUp() {
     const handleSubmit = (event) => {
         event.preventDefault();
 
-        setGetCount(0);//@@@@@@@@@@
+        // setGetCount(0);//@@@@@@@@@@
 
         const checkUser = users.find((user) => { if (user.email === data.email) { return user; } });
         console.log("checkUser", checkUser);
