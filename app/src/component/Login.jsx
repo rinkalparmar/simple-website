@@ -23,7 +23,7 @@ function Login() {
     console.log("users", users);
     console.log("error", errors);
 
-    const { setGetCount } = useContext(Context); //@@@@@@@
+    const { setGetCount, countDisplay } = useContext(Context); //@@@@@@@
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -36,10 +36,15 @@ function Login() {
             return;
         }
         dispatch(login(true));
-        localStorage.setItem("logindata", JSON.stringify(input));
+        // localStorage.setItem("logindata", JSON.stringify(input));
+        localStorage.setItem("loginData", JSON.stringify(findUser));
+        localStorage.setItem("isAuthenticate", true);
 
-        const savedOrders = JSON.parse(localStorage.getItem(`orders_${input.email}`)) || []; //@@@@@@@ set in menu files
-        setGetCount(savedOrders.length);//@@@@@@@
+        const savedOrders = JSON.parse(localStorage.getItem(`cartData`)) || []; //@@@@@@@ set in menu files
+        setGetCount(savedOrders);//@@@@@@@
+
+        countDisplay();
+        // setGetCount(0);
 
         navigate("/home");
         dispatch(setErrors(null));

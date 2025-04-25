@@ -23,7 +23,7 @@ function App() {
         <Route path="footer" element={<Footer />} />
         <Route path="login" element={<Login />} />
         <Route path="signup" element={<SignUp />} />
-        <Route path="ShowItem" element={<ShowItem/>} />
+        <Route path="showitem" element={<ShowItem/>} />
 
       </Routes>
     </>

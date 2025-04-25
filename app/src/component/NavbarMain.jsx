@@ -7,14 +7,20 @@ import { Link } from 'react-router-dom';
 import { useContext } from 'react';
 import Context from '../redux/Context';
 import { useNavigate } from 'react-router-dom';
+import Dropdown from 'react-bootstrap/Dropdown';
+import { MdAccountCircle } from "react-icons/md";
 
 function NavbarMain() {
 
     const checkUser = JSON.parse(localStorage.getItem("isAuthenticate"));
     console.log(checkUser);
-    const { getCount, setGetCount} = useContext(Context);
+    const { getCount, setGetCount } = useContext(Context);
 
-    console.log("............", getCount);
+    const loginData = JSON.parse(localStorage.getItem("loginData"));
+    const name = loginData?.name;
+    console.log("name", name);
+
+    console.log("getCount............", getCount);
     const navigate = useNavigate();
 
     const Logout = () => {
@@ -46,6 +52,15 @@ function NavbarMain() {
                 </Navbar.Collapse>
                 {
                     checkUser ? <>
+                        <Dropdown>
+                            <Dropdown.Toggle variant="primary" style={{ height: "30px", width: "50px" }}>
+                                <MdAccountCircle style={{ width: "30px" }} />
+                            </Dropdown.Toggle>
+
+                            <Dropdown.Menu>
+                                <Dropdown.Item style={{ backgroundColor: "grey", color: "white" }}>hello {name}</Dropdown.Item>
+                            </Dropdown.Menu>
+                        </Dropdown>
                         <div className='relative mx-4'>
                             <p className='absolute right-[-10px] top-[-10px] w-4 text-center leading-4 bg-red-700 text-white aspect-square rounded-full text-[10px]'>
                                 {getCount}

@@ -11,7 +11,7 @@ import Context from '../redux/Context';
 
 
 function SignUp() {
-    const [data, setData] = useState({ name: "", email: "", mobile: "", password: "" });
+    const [data, setData] = useState({ id: "", name: "", email: "", mobile: "", password: "" });
     const [error, setError] = useState("");
 
     const dispatch = useDispatch();
@@ -40,11 +40,18 @@ function SignUp() {
     const mobileFormate = (mobile) => {
         return /^\d{10}$/.test(mobile);
     };
-
+    const idFormate = (id) => {
+        return /^[0-9]+$/.test(id);
+    };
 
 
     const validation = (data) => {
         const newErrors = {};
+
+        if (users.some((item) => item.id === data.id)) {
+            newErrors.id = "enter unique id";
+        }
+
 
         if (!data.name || !nameFormate(data.name)) {
             newErrors.name = "enter only latter as name";
@@ -90,7 +97,7 @@ function SignUp() {
 
         const preData = [...users, data];//add user with exist user
         dispatch(signup(preData));
-        setData({ name: "", email: "", mobile: "", password: "" });
+        setData({ id: "", name: "", email: "", mobile: "", password: "" });
         setError({});
         dispatch(setErrors(null));
     };
@@ -110,6 +117,16 @@ function SignUp() {
                     {errors && <div className='error'>{errors}</div>}
                     <h2 className='text-center'>Sign Up Form</h2>
                     <Row className="mb-3">
+                        <Form.Group md="4" >
+                            <Form.Label>Id</Form.Label>
+                            <Form.Control
+                                type="Text"
+                                name="id"
+                                onChange={handleInput}
+                                value={data.id}
+                            />
+                            {error.id && <div className="error">{error.id}</div>}
+                        </Form.Group>
                         <Form.Group md="4" >
                             <Form.Label>Name</Form.Label>
                             <Form.Control

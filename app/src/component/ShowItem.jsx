@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useContext } from 'react';//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 import Context from '../redux/Context';//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -7,55 +8,145 @@ function ShowItem() {
   const [items, setItems] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
 
+  // const { removeItem: updateCartCount ,countDisplay} = useContext(Context);//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@rename the removeItem to updateCartCount
+  const { countDisplay } = useContext(Context);//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@rename the removeItem to updateCartCount
 
-  const { removeItem: updateCartCount } = useContext(Context);//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@rename the removeItem to updateCartCount
 
   useEffect(() => {
-    const logindata = JSON.parse(localStorage.getItem("logindata"));
-    const userEmail = logindata?.email;
 
-    if (userEmail) {
-      const userOrders = JSON.parse(localStorage.getItem(`orders_${userEmail}`)) || [];
-      setItems(userOrders);
+    const loginData = JSON.parse(localStorage.getItem("loginData")) || {};
+    const userId = loginData?.id;
+    console.log("show userId", userId);
 
-      const total = userOrders.reduce((init, item) => init + item.price, 0);//init means set 0 value
+    if (!userId) {
+      return;
+    }
+
+    const cartData = JSON.parse(localStorage.getItem("cartData")) || [];
+
+    const findUser = cartData.find((u) => u.userId === userId);
+    console.log("findUser", findUser);
+
+    if (findUser) {
+      setItems(findUser.items);
+
+      const total = findUser.items.reduce((init, item) => init + item.price, 0);
       setTotalPrice(total);
     }
 
   }, []);
-
+  console.log("items", items);
 
   const removeItem = (id) => {
-    const logindata = JSON.parse(localStorage.getItem("logindata"));
-    const userEmail = logindata?.email;
-    // console.log(userEmail);
+    // debugger;
+    const loginData = JSON.parse(localStorage.getItem("loginData")) || {};
+    const userId = loginData?.id;
+    console.log("remove userId", userId);
 
-    const removeCount = JSON.parse(localStorage.getItem("orderCount"));
-    console.log("remove", removeCount);
-    const removeitem = removeCount - 1;
+    if (!userId) {
+      return;
+    }
+
+    // const orderCount = JSON.parse(localStorage.getItem("orderCount"));
+    // const removeCount = orderCount - 1;
+    // updateCartCount(removeCount);
+    // localStorage.setItem("orderCount", JSON.stringify(removeCount));
 
 
+    const cartData = JSON.parse(localStorage.getItem("cartData")) || [];
 
-    if (userEmail) {
-      const userOrders = JSON.parse(localStorage.getItem(`orders_${userEmail}`)) || [];
-      console.log("userOrders", userOrders);
-      // console.log(items);
+    const findUser = cartData.findIndex((u) => u.userId === userId);
+    console.log("findUser", findUser);
 
-      const findId = userOrders.filter((item) => item.id !== id);
-      // console.log("object", findId);
+    if (findUser !== -1) {
+      const updateCartData = cartData[findUser].items.filter((item) => item.id !== id);
+      console.log("updateCartData", updateCartData);
+      cartData[findUser].items = updateCartData;
 
-      localStorage.setItem(`orders_${userEmail}`, JSON.stringify(findId));
-      updateCartCount(); //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+      localStorage.setItem("cartData", JSON.stringify(cartData));
+      setItems(updateCartData);
 
-      localStorage.setItem("orderCount", JSON.stringify(removeitem));
+      countDisplay();
 
-      setItems(findId);
-      const newTotalPrice = findId.reduce((init, item) => init + item.price, 0);
-      setTotalPrice(newTotalPrice);
+      const total = updateCartData.reduce((init, item) => init + item.price, 0);
+      setTotalPrice(total);
 
     }
   };
 
+
+
+  // const removeItem = (id) => {
+  //   // debugger;
+  //   const userData = JSON.parse(localStorage.getItem("userData"));
+  //   const userId = userData?.id;
+
+  //   if (!userId) return;
+
+  //   const removeCount = JSON.parse(localStorage.getItem("orderCount"));
+  //   console.log("remove", removeCount);
+  //   const removeitem = removeCount - 1;
+  //   localStorage.setItem("orderCount", JSON.stringify(removeitem));
+
+
+  //   const cartData = JSON.parse(localStorage.getItem(`cartData`)) || [];
+  //   console.log("cartData", cartData);
+  //   // console.log(items);
+
+  //   const UpdateCartData = cartData.map((citem) => citem.userId === userId ? { ...citem, items: citem.items.filter((item) => item.id !== id) } : citem);
+
+  //   localStorage.setItem("cartData", JSON.stringify(UpdateCartData));
+
+  //   const userCart = UpdateCartData.find(cart => cart.userId === userId);
+  //   const items = userCart?.items || [];
+  //   // const findId = cartData.filter((item) => item.id !== id);
+  //   // console.log("object", findId);
+
+  //   // localStorage.setItem(`cartData`, JSON.stringify(findId));
+  //   setItems(items);
+
+
+  //   const newTotalPrice = items.reduce((init, item) => init + item.price, 0);//
+  //   setTotalPrice(newTotalPrice);//
+
+  //   updateCartCount(); //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@//
+
+  // };
+
+  // const removeItem = (id) => {
+  //   const userData = JSON.parse(localStorage.getItem("userData"));
+  //   const userId = userData?.id;
+
+  //   if (!userId) return;
+
+  //   // Get current cart data
+  //   const cartData = JSON.parse(localStorage.getItem("cartData")) || [];
+
+  //   // Update the cart data by filtering out the item to be removed
+  //   const updatedCartData = cartData.map((citem) =>
+  //     citem.userId === userId
+  //       ? { ...citem, items: citem.items.filter((item) => item.id !== id) }
+  //       : citem
+  //   );
+
+  //   // Save the updated cart data to localStorage
+  //   localStorage.setItem("cartData", JSON.stringify(updatedCartData));
+
+  //   // Get the updated items for the user and update the state
+  //   const updatedUserCart = updatedCartData.find(cart => cart.userId === userId);
+  //   const updatedItems = updatedUserCart?.items || [];
+  //   setItems(updatedItems);
+
+  //   // Recalculate the total price after removal
+  //   const newTotalPrice = updatedItems.reduce((init, item) => init + item.price, 0);
+  //   setTotalPrice(newTotalPrice);
+
+  //   // Call updateCartCount (if it updates the context/cart state)
+  //   updateCartCount();
+  // };
+
+
+  console.log("items", items);
   return (
     <div>
       <h1 className="text-center" style={{ marginTop: "45px" }}>Your Ordered Items</h1>
@@ -82,5 +173,3 @@ function ShowItem() {
 }
 
 export default ShowItem;
-
-

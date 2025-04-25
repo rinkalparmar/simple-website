@@ -1,8 +1,9 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import { MenuList } from '../component/MenuList';
 import Button from "react-bootstrap/Button";
 import Card from 'react-bootstrap/Card';
 import Context from '../redux/Context';
+
 
 
 function Menu() {
@@ -12,21 +13,35 @@ function Menu() {
 		alert("login first");
 	};
 
-	const { setGetCount, updateCount } = useContext(Context);//@@@@@@@
+	const { countDisplay } = useContext(Context);//@@@@@@@
 
 	const addToCart = (item) => {//@@@@@@@
-		const logindata = JSON.parse(localStorage.getItem("logindata"));
-		const userEmail = logindata?.email;
-		if (!userEmail) return;
+		const loginData = JSON.parse(localStorage.getItem("loginData")) || {};
+		const userId = loginData?.id;
+		console.log("userId", userId);
 
-		let userOrders = JSON.parse(localStorage.getItem(`orders_${userEmail}`)) || [];
-		userOrders.push(item);
-		// console.log("object", userOrders);
-		localStorage.setItem(`orders_${userEmail}`, JSON.stringify(userOrders));
-		// setGetCount(userOrders);//displya total count of items
-		updateCount(userOrders);
+		if (!userId) {
+			return;
+		}
+
+		const cartData = JSON.parse(localStorage.getItem("cartData")) || [];
+		console.log("cartData", cartData);
+
+		const userfind = cartData.find((u) => u.userId === userId);
+		console.log("userfind", userfind);
+
+		if (userfind) {
+			userfind.items.push(item);
+		}
+		else {
+			cartData.push({ userId: userId, items: [item] });
+		}
+
+		localStorage.setItem("cartData", JSON.stringify(cartData));
+
+		countDisplay();
+
 	};
-
 	return (
 		<>
 			<h1 className='text-center' style={{ marginTop: "40px" }}>MenuList</h1>
@@ -41,6 +56,7 @@ function Menu() {
 									<Card.Title>{item.name}</Card.Title>
 									<Card.Text>
 										{item.description}
+										{item.price}
 									</Card.Text>
 									{
 										checkUser ?
@@ -57,6 +73,6 @@ function Menu() {
 			</div>;
 		</>
 	);
-}
+};
 
 export default Menu;
