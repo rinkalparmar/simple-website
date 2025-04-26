@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { updateCount, removeItems } from '../store/cartSlice';
 
+
 function ShowItem() {
   const [items, setItems] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
@@ -30,7 +31,7 @@ function ShowItem() {
     if (findUser) {
       setItems(findUser.items);
 
-      const total = findUser.items.reduce((init, item) => init + item.price, 0);
+      const total = findUser.items.reduce((init, item) => init + item.totalPrice, 0);//this total price instatnt of price beacuse when quantity more then those make added so,,
       setTotalPrice(total);
     }
 
@@ -50,21 +51,30 @@ function ShowItem() {
     const findUser = cartData.findIndex((u) => u.userId === userId);
 
     if (findUser !== -1) {
-      const updateCartData = cartData[findUser].items.filter((item) => item.id !== id);
+      const updateCartData = cartData[findUser].items.map((item) => {
+        if (item.id === id) {
+          if (item.quantity > 1) {
+            item.quantity -= 1;
+            item.totalPrice = item.price * item.quantity;
+          }
+          else {
+            return null;
+          }
+        }
+        return item;
+      }).filter(Boolean);
       cartData[findUser].items = updateCartData;
 
       localStorage.setItem("cartData", JSON.stringify(cartData));
       setItems(updateCartData);
 
 
-      const total = updateCartData.reduce((init, item) => init + item.price, 0);
+      const total = updateCartData.reduce((init, item) => init + item.totalPrice, 0);
       setTotalPrice(total);
       dispatch(removeItems());
 
     }
   };
-
-
   return (
     <div>
       <h1 className="text-center" style={{ marginTop: "45px" }}>Your Ordered Items</h1>
@@ -78,6 +88,8 @@ function ShowItem() {
                 <div className="card-body">
                   <h5 className="card-title">{item.name}</h5>
                   <p className="card-text">{item.description}</p>
+                  <p className="card-text"><strong>Quantity:</strong> {item.quantity}</p>
+                  <p className="card-text"><strong>Total Price:</strong> ₹{item.totalPrice}</p>
                   <p className="card-text"><strong>Price:</strong> ₹{item.price}</p>
                   <button className='btn btn-danger' onClick={() => removeItem(item.id)}>Remove Item</button>
                 </div>

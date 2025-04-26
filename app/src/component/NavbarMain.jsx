@@ -20,7 +20,7 @@ function NavbarMain() {
     console.log("countGet", countGet);
     useEffect(() => {
         dispatch(updateCount());//it used loging user count display so...
-    });
+    }, []);
 
 
 
@@ -36,7 +36,7 @@ function NavbarMain() {
     const Logout = () => {
         localStorage.removeItem("isAuthenticate");
         localStorage.removeItem("loginData");
-        dispatch(setCount(countGet));
+        dispatch(setCount(0));
         navigate("/home");
     };
 
@@ -82,8 +82,8 @@ function NavbarMain() {
                     </>
                         : <>
                             <div className='relative mx-4'>
-                                <p className='absolute right-[-10px] top-[-10px] w-4 text-center leading-4 bg-red-700 text-white aspect-square rounded-full text-[10px]'>{countGet}</p>
-                                <BsCartCheck style={{ backgroundColor: "white", height: "30px", width: "30px", float: "right" }} />
+                                <p className='absolute right-[-10px] top-[-10px] w-4 text-center leading-4 bg-red-700 text-white aspect-square rounded-full text-[10px]'  >{countGet}</p>
+                                <BsCartCheck style={{ backgroundColor: "white", height: "30px", width: "30px", float: "right" }} onClick={() => navigate("/login")} />
                             </div>
                             <button className='btn btn-success' onClick={() => navigate("/login")}>Login</button>
                         </>

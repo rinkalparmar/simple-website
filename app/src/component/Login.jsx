@@ -7,8 +7,7 @@ import Container from 'react-bootstrap/esm/Container';
 import { useDispatch, useSelector } from 'react-redux';
 import { login, setErrors } from '../store/authSlice';
 import { useNavigate } from 'react-router-dom';
-import { useContext } from 'react';
-
+import { updateCount } from '../store/cartSlice';
 
 
 function Login() {
@@ -38,7 +37,7 @@ function Login() {
         localStorage.setItem("isAuthenticate", true);
 
 
-
+        dispatch(updateCount());
         navigate("/home");
         dispatch(setErrors(null));
         setInput({ email: "", password: "" });

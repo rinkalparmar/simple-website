@@ -2,6 +2,10 @@ import { createSlice } from "@reduxjs/toolkit";
 
 
 const initialState = {
+    // [{
+    //     itemid: 132,
+    //     count: 2,
+    // }, i]
     count: 0,
 };
 
@@ -10,11 +14,13 @@ const cartSlice = createSlice({
     initialState,
     reducers: {
         setCount: (state, action) => {
-            state.carts = action.payload;
-            console.log("state.carts", state.carts);
+            state.count = action.payload;
+            console.log("state.count", state.count);
+
         },
         addItem: (state, action) => {
             state.count += 1;
+
         },
         removeItems: (state, action) => {
             if (state.count > 0) state.count -= 1;
@@ -39,6 +45,7 @@ const cartSlice = createSlice({
 
             if (userfind) {
                 state.count = userfind.items.length;
+                state.count = userfind.items.reduce((total, item) => total + item.quantity, 0);
             }
             else {
                 state.count = 0;
@@ -49,3 +56,4 @@ const cartSlice = createSlice({
 });
 export default cartSlice.reducer;
 export const { setCount, updateCount, addItem, removeItems } = cartSlice.actions;
+

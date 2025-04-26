@@ -1,25 +1,53 @@
-import React, { useEffect } from 'react';
-import { MenuList } from '../component/MenuList';
+import React, { useEffect, useState } from 'react';
+// import { MenuList } from '../component/MenuList';	
+import { MenuList } from "../staticData/MenuList";
 import Button from "react-bootstrap/Button";
 import Card from 'react-bootstrap/Card';
 import { useDispatch } from 'react-redux';
 import { addItem } from '../store/cartSlice';
-
-
+import { FaPlus } from "react-icons/fa";
+import { FaMinus } from "react-icons/fa";
+import { updateCount } from '../store/cartSlice';
 function Menu() {
 
 	const dispatch = useDispatch();
+	const [quantities, setQuantities] = useState({});
+
+	// debugger;
+	const increament = (id) => {
+		setQuantities((preQ) => {
+			const currentQ = preQ[id] || 1; //bydefual setQuantities now {} so set 1 then add by 1
+			return { ...preQ, [id]: Math.min(currentQ + 1, 30) };
+		});
+	};
+
+
+	const decreament = (id) => {
+		setQuantities(preQ => {
+			const currentQ = preQ[id] || 1;
+			return { ...preQ, [id]: Math.max(currentQ - 1, 1) };
+		});
+	};
+
+
 
 	const checkUser = JSON.parse(localStorage.getItem("isAuthenticate"));
 	const errorMsg = () => {
 		alert("login first");
 	};
 
-
+	useEffect(() => {
+		dispatch(updateCount());
+	}, [dispatch]);
 
 	const addToCart = (item) => {//@@@@@@@
+		// debugger;
 
-		dispatch(addItem());
+		const quantity = { quantities };
+		const itemQty = { ...item, quantity, totalPrice: item.price * quantity };
+
+
+		dispatch(addItem(itemQty));
 
 		const loginData = JSON.parse(localStorage.getItem("loginData")) || {};
 		const userId = loginData?.id;
@@ -33,11 +61,23 @@ function Menu() {
 		const userfind = cartData.find((u) => u.userId === userId);
 
 		if (userfind) {
-			userfind.items.push(item);
+			const existing = userfind.items.find(i => i.id === item.id);
+			if (existing) {
+				existing.quantity += quantity;
+				existing.totalPrice += item.price * quantity;
+			} else {
+				userfind.items.push(itemQty);
+			}
+		} else {
+			cartData.push({ userId, items: [itemQty] });
 		}
-		else {
-			cartData.push({ userId: userId, items: [item] });
-		}
+
+		// if (userfind) {
+		// 	userfind.items.push(item);
+		// }
+		// else {
+		// 	cartData.push({ userId: userId, items: [item] });
+		// }
 
 		localStorage.setItem("cartData", JSON.stringify(cartData));
 
@@ -62,9 +102,13 @@ function Menu() {
 									{
 										checkUser ?
 											<>
-
+												<div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+													<FaMinus onClick={() => decreament(item.id)} style={{ cursor: 'pointer' }} />
+													<p style={{ margin: '0' }}>{quantities[item.id] || 1}</p>
+													<FaPlus onClick={() => increament(item.id)} style={{ cursor: 'pointer' }} />
+												</div>
 												<Button variant='success' onClick={() => addToCart(item)} className='mx-2'>Order</Button>
-												<input type="number" min="0" max="50" className='' />
+
 											</>
 											:
 											<Button variant='success' onClick={errorMsg}>Order</Button>
