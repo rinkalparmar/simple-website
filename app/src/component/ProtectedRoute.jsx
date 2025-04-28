@@ -4,7 +4,7 @@ import { Navigate } from 'react-router-dom';
 
 
 function ProtectedRoute() {
-    const isAuthenticate = localStorage.getItem("loginData");
+    const isAuthenticate = localStorage.getItem("isAuthenticate");
     return isAuthenticate ? <Outlet /> : <Navigate to="/login" replace />;
 }
 

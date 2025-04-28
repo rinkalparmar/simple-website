@@ -8,8 +8,9 @@ import { addItem } from '../store/cartSlice';
 import { FaPlus } from "react-icons/fa";
 import { FaMinus } from "react-icons/fa";
 import { updateCount } from '../store/cartSlice';
-function Menu() {
 
+
+function Menu() {
 	const dispatch = useDispatch();
 	const [quantities, setQuantities] = useState({});
 
@@ -20,7 +21,6 @@ function Menu() {
 			return { ...preQ, [id]: Math.min(currentQ + 1, 30) };
 		});
 	};
-
 
 	const decreament = (id) => {
 		setQuantities(preQ => {
@@ -40,49 +40,14 @@ function Menu() {
 		dispatch(updateCount());
 	}, [dispatch]);
 
-	const addToCart = (item) => {//@@@@@@@
-		// debugger;
 
-		const quantity = { quantities };
+	const addToCart = (item) => {
+		const quantity = quantities[item.id] || 1;
 		const itemQty = { ...item, quantity, totalPrice: item.price * quantity };
-
-
 		dispatch(addItem(itemQty));
-
-		const loginData = JSON.parse(localStorage.getItem("loginData")) || {};
-		const userId = loginData?.id;
-
-		if (!userId) {
-			return;
-		}
-
-		const cartData = JSON.parse(localStorage.getItem("cartData")) || [];
-
-		const userfind = cartData.find((u) => u.userId === userId);
-
-		if (userfind) {
-			const existing = userfind.items.find(i => i.id === item.id);
-			if (existing) {
-				existing.quantity += quantity;
-				existing.totalPrice += item.price * quantity;
-			} else {
-				userfind.items.push(itemQty);
-			}
-		} else {
-			cartData.push({ userId, items: [itemQty] });
-		}
-
-		// if (userfind) {
-		// 	userfind.items.push(item);
-		// }
-		// else {
-		// 	cartData.push({ userId: userId, items: [item] });
-		// }
-
-		localStorage.setItem("cartData", JSON.stringify(cartData));
-
-
 	};
+
+
 	return (
 		<>
 			<h1 className='text-center' style={{ marginTop: "40px" }}>MenuList</h1>

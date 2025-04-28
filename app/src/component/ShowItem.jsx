@@ -1,87 +1,40 @@
 
-import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { updateCount, removeItems } from '../store/cartSlice';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateCount, removeItems, fetchCartData } from '../store/cartSlice';
 
 
 function ShowItem() {
-  const [items, setItems] = useState([]);
-  const [totalPrice, setTotalPrice] = useState(0);
 
   const dispatch = useDispatch();
+
+  const items = useSelector((state) => state.cart.items);
+  const totalPrice = useSelector((state) => state.cart.totalPrice);
+
+
 
   useEffect(() => {
     dispatch(updateCount());
   }, [dispatch]);
 
+
   useEffect(() => {
+    dispatch(fetchCartData());
+  }, [dispatch]);
 
-    const loginData = JSON.parse(localStorage.getItem("loginData")) || {};
-    const userId = loginData?.id;
-    console.log("show userId", userId);
-
-    if (!userId) {
-      return;
-    }
-
-    const cartData = JSON.parse(localStorage.getItem("cartData")) || [];
-
-    const findUser = cartData.find((u) => u.userId === userId);
-
-    if (findUser) {
-      setItems(findUser.items);
-
-      const total = findUser.items.reduce((init, item) => init + item.totalPrice, 0);//this total price instatnt of price beacuse when quantity more then those make added so,,
-      setTotalPrice(total);
-    }
-
-  }, []);
 
   const removeItem = (id) => {
-
-    const loginData = JSON.parse(localStorage.getItem("loginData")) || {};
-    const userId = loginData?.id;
-
-    if (!userId) {
-      return;
-    }
-
-    const cartData = JSON.parse(localStorage.getItem("cartData")) || [];
-
-    const findUser = cartData.findIndex((u) => u.userId === userId);
-
-    if (findUser !== -1) {
-      const updateCartData = cartData[findUser].items.map((item) => {
-        if (item.id === id) {
-          if (item.quantity > 1) {
-            item.quantity -= 1;
-            item.totalPrice = item.price * item.quantity;
-          }
-          else {
-            return null;
-          }
-        }
-        return item;
-      }).filter(Boolean);
-      cartData[findUser].items = updateCartData;
-
-      localStorage.setItem("cartData", JSON.stringify(cartData));
-      setItems(updateCartData);
-
-
-      const total = updateCartData.reduce((init, item) => init + item.totalPrice, 0);
-      setTotalPrice(total);
-      dispatch(removeItems());
-
-    }
+    dispatch(removeItems(id));
   };
+
+
   return (
     <div>
       <h1 className="text-center" style={{ marginTop: "45px" }}>Your Ordered Items</h1>
       <button className='btn btn-success float-right'>Total Payment ₹{totalPrice}</button>
       <div className="row" style={{ margin: "30px" }}>
         {
-          items.map((item, index) => (
+          Array.isArray(items) ? items.map((item, index) => (
             <div className="col-sm-4" key={index}>
               <div className="card" style={{ width: '18rem', margin: "4px" }}>
                 <img src={item.image} className="card-img-top" style={{ height: "250px" }} alt={item.name} />
@@ -95,7 +48,8 @@ function ShowItem() {
                 </div>
               </div>
             </div>
-          ))
+          )) :
+            console.log("not display===========")
         }
       </div>
     </div>

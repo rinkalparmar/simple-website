@@ -81,6 +81,7 @@ function Login() {
                                         name='password'
                                         onChange={handleInput}
                                         value={input.password}
+                                         autoComplete='on'
                                     />
                                 </Form.Group>
                             </Row>
