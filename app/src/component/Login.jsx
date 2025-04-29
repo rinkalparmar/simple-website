@@ -7,7 +7,7 @@ import Container from 'react-bootstrap/esm/Container';
 import { useDispatch, useSelector } from 'react-redux';
 import { login, setErrors } from '../store/authSlice';
 import { useNavigate } from 'react-router-dom';
-import { updateCount } from '../store/cartSlice';
+import { fetchCartData } from '../store/cartSlice';
 
 
 function Login() {
@@ -37,7 +37,7 @@ function Login() {
         localStorage.setItem("isAuthenticate", true);
 
 
-        dispatch(updateCount());
+        dispatch(fetchCartData());
         navigate("/home");
         dispatch(setErrors(null));
         setInput({ email: "", password: "" });
@@ -81,7 +81,7 @@ function Login() {
                                         name='password'
                                         onChange={handleInput}
                                         value={input.password}
-                                         autoComplete='on'
+                                        autoComplete='on'
                                     />
                                 </Form.Group>
                             </Row>

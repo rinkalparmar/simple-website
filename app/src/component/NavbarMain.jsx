@@ -9,18 +9,21 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import { MdAccountCircle } from "react-icons/md";
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { setCount, updateCount } from "../store/cartSlice";
+import { setCount, fetchCartData, removeItemFromCart } from "../store/cartSlice";
 
 function NavbarMain() {
-    const navigate = useNavigate();
 
     const dispatch = useDispatch();
     const countGet = useSelector((state) => state.cart.count);
+    const navigate = useNavigate();
+
     console.log("countGet", countGet);
 
     useEffect(() => {
-        dispatch(updateCount());//it used loging user count display so...
+        dispatch(fetchCartData());//it used loging user count display so...
     }, []);
+
+
 
 
     const checkUser = JSON.parse(localStorage.getItem("isAuthenticate"));
@@ -34,6 +37,7 @@ function NavbarMain() {
         localStorage.removeItem("isAuthenticate");
         localStorage.removeItem("loginData");
         dispatch(setCount(0));
+        dispatch(removeItemFromCart());
         navigate("/home");
     };
 

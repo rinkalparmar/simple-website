@@ -1,26 +1,30 @@
 
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateCount, removeItems, fetchCartData } from '../store/cartSlice';
+import { fetchCartData, removeItems } from '../store/cartSlice';
+
 
 
 function ShowItem() {
 
   const dispatch = useDispatch();
 
+
   const items = useSelector((state) => state.cart.items);
   const totalPrice = useSelector((state) => state.cart.totalPrice);
-
-
-
-  useEffect(() => {
-    dispatch(updateCount());
-  }, [dispatch]);
+  console.log("totalPrice", totalPrice);
 
 
   useEffect(() => {
     dispatch(fetchCartData());
   }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchCartData());
+  }, [dispatch]);
+
+
+
 
 
   const removeItem = (id) => {
@@ -34,7 +38,7 @@ function ShowItem() {
       <button className='btn btn-success float-right'>Total Payment ₹{totalPrice}</button>
       <div className="row" style={{ margin: "30px" }}>
         {
-          Array.isArray(items) ? items.map((item, index) => (
+          items.map((item, index) => (
             <div className="col-sm-4" key={index}>
               <div className="card" style={{ width: '18rem', margin: "4px" }}>
                 <img src={item.image} className="card-img-top" style={{ height: "250px" }} alt={item.name} />
@@ -48,8 +52,7 @@ function ShowItem() {
                 </div>
               </div>
             </div>
-          )) :
-            console.log("not display===========")
+          ))
         }
       </div>
     </div>

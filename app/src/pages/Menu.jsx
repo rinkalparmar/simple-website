@@ -7,12 +7,23 @@ import { useDispatch } from 'react-redux';
 import { addItem } from '../store/cartSlice';
 import { FaPlus } from "react-icons/fa";
 import { FaMinus } from "react-icons/fa";
-import { updateCount } from '../store/cartSlice';
+import { fetchCartData } from '../store/cartSlice';
+import { useSelector } from 'react-redux';
 
 
 function Menu() {
 	const dispatch = useDispatch();
 	const [quantities, setQuantities] = useState({});
+
+	const items = useSelector((state) => state.cart.items);
+
+	const displayTotalCartItem = (id) => {
+		const getItem = items.find((i) => i.id === id);
+		// console.log("getitem", getItem);
+		// console.log("getitem", getItem ? getItem.quantity : "");
+		return getItem ? getItem.quantity : 0;
+	};
+
 
 	// debugger;
 	const increament = (id) => {
@@ -37,7 +48,7 @@ function Menu() {
 	};
 
 	useEffect(() => {
-		dispatch(updateCount());
+		dispatch(fetchCartData());
 	}, [dispatch]);
 
 
@@ -45,6 +56,7 @@ function Menu() {
 		const quantity = quantities[item.id] || 1;
 		const itemQty = { ...item, quantity, totalPrice: item.price * quantity };
 		dispatch(addItem(itemQty));
+		alert("your Order Successfully");
 	};
 
 
@@ -72,13 +84,19 @@ function Menu() {
 													<p style={{ margin: '0' }}>{quantities[item.id] || 1}</p>
 													<FaPlus onClick={() => increament(item.id)} style={{ cursor: 'pointer' }} />
 												</div>
-												<Button variant='success' onClick={() => addToCart(item)} className='mx-2'>Order</Button>
 
+												<Button variant='success' onClick={() => addToCart(item)} className='mx-2'>Order</Button>
+												{
+													displayTotalCartItem(item.id) > 0 && (
+														<p className='text text-success'>
+															You Have  {displayTotalCartItem(item.id)} 	{displayTotalCartItem(item.id) === 1 ? 'item' : 'items'} already
+														</p>
+													)
+												}
 											</>
 											:
 											<Button variant='success' onClick={errorMsg}>Order</Button>
 									}
-
 								</Card.Body>
 							</Card>
 						</div>;

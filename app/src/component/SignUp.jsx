@@ -22,10 +22,6 @@ function SignUp() {
     console.log("users", users);
     console.log("error", errors);
 
-
-
-
-
     const nameFormate = (name) => {
         return /^[a-zA-Z]+$/.test(name);
     };

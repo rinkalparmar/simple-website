@@ -1,14 +1,16 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { useId } from "react";
 
 
 const initialState = {
   // [{
-  //     itemid: 132,
+  //   userId:1  itemid: 132,
   //     count: 2,
-  // }, i]
+  // }, {userId:1  itemid: 132,count: 2,}]
   count: 0,
   items: [],
-  totalPrice: 0
+  totalPrice: 0,
+  allInfo: []
 
 };
 
@@ -20,8 +22,8 @@ const cartSlice = createSlice({
       state.count = action.payload;
       console.log("state.count", state.count);
     },
+
     addItem: (state, action) => {
-      // state.count += 1;
       const loginData = JSON.parse(localStorage.getItem("loginData")) || {};
       const userId = loginData?.id;
 
@@ -31,14 +33,13 @@ const cartSlice = createSlice({
 
       const cartData = JSON.parse(localStorage.getItem("cartData")) || [];
       const userfind = cartData.find((u) => u.userId === userId);
-      console.log("action???? ", userfind);
 
       if (userfind) {
         const existing = userfind.items.find(i => i.id === action.payload.id);
         console.log("existing", existing);
         if (existing) {
           existing.quantity += action.payload.quantity;
-          existing.totalPrice += existing.price * existing.quantity;
+          existing.totalPrice += action.payload.totalPrice;
         }
         else {
           userfind.items.push(action.payload);
@@ -48,40 +49,78 @@ const cartSlice = createSlice({
       }
       localStorage.setItem("cartData", JSON.stringify(cartData));
 
-      state.items = ([...state.items, action.payload]);//this store in redux dev tool also store exist data so..
-      state.count += action.payload.quantity;
-      state.totalPrice += action.payload.totalPrice;
+      const updated = cartData.find((u) => u.userId === userId);
+      // console.log("updated", updated);
+
+      state.items = updated.items;
+      state.count = updated.items.reduce((init, item) => init + item.quantity, 0);;
+      state.totalPrice = updated.items.reduce((init, item) => init + item.totalPrice, 0);
+
+
+
+
+      ///////////
+
+      // const itemIds = cartData[0].items[0].id;//for signle item
+      const itemIds = cartData[0].items.map((item) => item.id);
+      console.log("cartDataItemId", itemIds);
+
+      const allInfo = JSON.parse(localStorage.getItem("allInfo")) || [];
+      console.log("allInfo", allInfo);
+
+      itemIds.forEach(iid => {
+        console.log("iid", iid);
+        const checkExitsing = allInfo.find((i) => i.itemIds === iid);
+        console.log("~~~cartData: ", cartData)
+        debugger
+        console.log("checkExitsing", checkExitsing);
+        if (checkExitsing) {
+          checkExitsing.count += action.payload.quantity;
+
+        }
+        else {
+          allInfo.push({ userId: userId, itemIds: iid, count: action.payload.quantity });
+        }
+      });
+      localStorage.setItem("allInfo", JSON.stringify(allInfo));
+      state.allInfo = allInfo;
+
+      ///////////////
+
+
     },
-    fetchCartData: (state, action) => {
-      const loginData = JSON.parse(localStorage.getItem("loginData")) || {};
-      const userId = loginData?.id;
-      console.log("show userId", userId);
 
-      if (!userId) {
-        state.count = 0;
-        state.items = [];
-        state.totalPrice = 0;
-        return;
-      }
-      const cartData = JSON.parse(localStorage.getItem("cartData")) || [];
+    // fetchCartData1: (state, action) => {
+    //   const loginData = JSON.parse(localStorage.getItem("loginData")) || {};
+    //   const userId = loginData?.id;
+    //   console.log("show userId", userId);
 
-      const findUser = cartData.find((u) => u.userId === userId);
-      console.log("objectfindUser", findUser);
+    //   if (!userId) {
+    //     state.count = 0;
+    //     state.items = [];
+    //     state.totalPrice = 0;
+    //     return;
+    //   }
+    //   const cartData = JSON.parse(localStorage.getItem("cartData")) || [];
 
-      if (findUser) {
-        state.items = findUser.items;
-        state.count = findUser.items.reduce((init, item) => init + item.quantity, 0);
-        state.totalPrice = findUser.items.reduce((init, item) => init + item.totalPrice, 0);
-      }
-      else {
-        state.count = 0;
-        state.items = [];
-        state.totalPrice = 0;
-      }
+    //   const findUser = cartData.find((u) => u.userId === userId);
+    //   console.log("objectfindUser", findUser);
 
-    },
+    //   if (findUser) {
+    //     state.items = findUser.items;
+    //     state.count = findUser.items.reduce((init, item) => init + item.quantity, 0);
+    //     state.totalPrice = findUser.items.reduce((init, item) => init + item.totalPrice, 0);
+    //   }
+    //   else {
+    //     state.count = 0;
+    //     state.items = [];
+    //     state.totalPrice = 0;
+    //   }
+
+    // },
+
     removeItems: (state, action) => {
-      // if (state.count > 0) state.count -= 1;
+      // debugger;
       const loginData = JSON.parse(localStorage.getItem("loginData")) || {};
       const userId = loginData?.id;
 
@@ -93,7 +132,6 @@ const cartSlice = createSlice({
 
       console.log("findUser---------------------", findUser);
 
-      // cartData = cartData[findUser];
       if (findUser !== -1) {
         const updateCartData = cartData[findUser].items.map((item) => {
           if (item.id === action.payload) {
@@ -109,7 +147,7 @@ const cartSlice = createSlice({
             }
           }
           return item;//if not change then return same items
-        }).filter(Boolean);
+        }).filter(Boolean);//when last item there then delete from ui
 
         cartData[findUser].items = updateCartData;
         localStorage.setItem("cartData", JSON.stringify(cartData));
@@ -118,10 +156,24 @@ const cartSlice = createSlice({
         state.count = updateCartData.reduce((init, item) => init + item.quantity, 0);
         state.totalPrice = updateCartData.reduce((init, item) => init + item.totalPrice, 0);
 
-      }
+        const allInfo = JSON.parse(localStorage.getItem("allInfo")) || [];
 
+        const updateAllInfoForRemove = allInfo.map((info) => {
+          if (info.userId === userId && info.itemIds === action.payload) {
+            if (info.count > 1) {
+              info.count -= 1;
+            }
+            else {
+              return null;//when last item then remove to ui
+            }
+          }
+          return info;
+        }).filter(Boolean);
+        localStorage.setItem("allInfo", JSON.stringify(updateAllInfoForRemove));
+      }
     },
-    updateCount: (state, action) => {
+
+    fetchCartData: (state, action) => {
       const loginData = JSON.parse(localStorage.getItem("loginData")) || {};
       const userId = loginData?.id;
       console.log("userId", userId);
@@ -129,6 +181,8 @@ const cartSlice = createSlice({
 
       if (!userId) {
         state.count = 0;
+        state.items = [];
+        state.totalPrice = 0;
         return;
       }
 
@@ -139,17 +193,30 @@ const cartSlice = createSlice({
       console.log("userfind", userfind);
 
       if (userfind) {
+        state.items = userfind.items;
         state.count = userfind.items.reduce((total, item) => total + item.quantity, 0);
+        state.totalPrice = userfind.items.reduce((init, item) => init + item.totalPrice, 0);
+
       }
       else {
         state.count = 0;
+        state.items = [];
+        state.totalPrice = 0;
       }
     },
+
+    removeItemFromCart: (state, action) => {
+      state.count = 0;
+      state.items = [];
+      state.totalPrice = 0;
+    },
+
+
 
   }
 });
 export default cartSlice.reducer;
-export const { setCount, updateCount, addItem, removeItems, fetchCartData } = cartSlice.actions;
+export const { setCount, fetchCartData, addItem, removeItems, removeItemFromCart, fetchCartData1 } = cartSlice.actions;
 
 
 
