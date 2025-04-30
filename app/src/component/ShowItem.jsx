@@ -19,9 +19,9 @@ function ShowItem() {
     dispatch(fetchCartData());
   }, [dispatch]);
 
-  useEffect(() => {
-    dispatch(fetchCartData());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(fetchCartData());
+  // }, [dispatch]);
 
 
 

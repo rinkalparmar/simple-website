@@ -9,7 +9,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import { MdAccountCircle } from "react-icons/md";
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { setCount, fetchCartData, removeItemFromCart } from "../store/cartSlice";
+import { setCount, removeItemFromCart } from "../store/cartSlice";
 
 function NavbarMain() {
 
@@ -19,9 +19,9 @@ function NavbarMain() {
 
     console.log("countGet", countGet);
 
-    useEffect(() => {
-        dispatch(fetchCartData());//it used loging user count display so...
-    }, []);
+    // useEffect(() => {
+    //     dispatch(fetchCartData());//it used loging user count display so...
+    // }, []);
 
 
 

@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { useId } from "react";
+// import { useId } from "react";
 
 
 const initialState = {
@@ -150,20 +150,22 @@ const cartSlice = createSlice({
         state.count = updateCartData.reduce((init, item) => init + item.quantity, 0);
         state.totalPrice = updateCartData.reduce((init, item) => init + item.totalPrice, 0);
 
-        // const allInfo = JSON.parse(localStorage.getItem("allInfo")) || [];
 
-        // const updateAllInfoForRemove = allInfo.map((info) => {
-        //   if (info.userId === userId && info.itemIds === action.payload) {
-        //     if (info.count > 1) {
-        //       info.count -= 1;
-        //     }
-        //     else {
-        //       return null;//when last item then remove to ui
-        //     }
-        //   }
-        //   return info;
-        // }).filter(Boolean);
-        // localStorage.setItem("allInfo", JSON.stringify(updateAllInfoForRemove));
+        const allInfo = JSON.parse(localStorage.getItem("allInfo")) || [];
+        const updateAllInfoForRemove = allInfo.map((info) => {
+          if (info.userId === userId && info.itemId === action.payload) {
+            if (info.count > 1) {
+              info.count -= 1;
+              return { ...info };
+            }
+            else {
+              return null;//when last item then remove to ui
+            }
+          }
+          return info;
+        }).filter(Boolean);
+        localStorage.setItem("allInfo", JSON.stringify(updateAllInfoForRemove));
+        state.allInfo = updateAllInfoForRemove;
       }
     },
 
