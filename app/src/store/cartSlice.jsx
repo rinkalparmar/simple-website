@@ -32,6 +32,7 @@ const cartSlice = createSlice({
       }
 
       const cartData = JSON.parse(localStorage.getItem("cartData")) || [];
+
       const userfind = cartData.find((u) => u.userId === userId);
 
       if (userfind) {
@@ -57,37 +58,30 @@ const cartSlice = createSlice({
       state.totalPrice = updated.items.reduce((init, item) => init + item.totalPrice, 0);
 
 
+      const itemId = action.payload.id;
+      const quantity = action.payload.quantity;
+      console.log("itemId", itemId);
+      console.log("quantity", quantity);
 
+      let allInfo = JSON.parse(localStorage.getItem("allInfo")) || [];
+      console.log("object;;;;;;;;allInfo", allInfo);
 
-      ///////////
+      const existingInfo = allInfo.find(
+        (entry) => entry.userId === userId && entry.itemId === itemId
+      );
+      console.log(";;;;;;;;;existingInfo", existingInfo);
 
-      // const itemIds = cartData[0].items[0].id;//for signle item
-      const itemIds = cartData[0].items.map((item) => item.id);
-      console.log("cartDataItemId", itemIds);
-
-      const allInfo = JSON.parse(localStorage.getItem("allInfo")) || [];
-      console.log("allInfo", allInfo);
-
-      itemIds.forEach(iid => {
-        console.log("iid", iid);
-        const checkExitsing = allInfo.find((i) => i.itemIds === iid);
-        console.log("~~~cartData: ", cartData)
-        debugger
-        console.log("checkExitsing", checkExitsing);
-        if (checkExitsing) {
-          checkExitsing.count += action.payload.quantity;
-
-        }
-        else {
-          allInfo.push({ userId: userId, itemIds: iid, count: action.payload.quantity });
-        }
-      });
+      if (existingInfo) {
+        existingInfo.count += quantity;
+      } else {
+        allInfo.push({
+          userId,
+          itemId,
+          count: quantity
+        });
+      }
       localStorage.setItem("allInfo", JSON.stringify(allInfo));
       state.allInfo = allInfo;
-
-      ///////////////
-
-
     },
 
     // fetchCartData1: (state, action) => {
@@ -156,20 +150,20 @@ const cartSlice = createSlice({
         state.count = updateCartData.reduce((init, item) => init + item.quantity, 0);
         state.totalPrice = updateCartData.reduce((init, item) => init + item.totalPrice, 0);
 
-        const allInfo = JSON.parse(localStorage.getItem("allInfo")) || [];
+        // const allInfo = JSON.parse(localStorage.getItem("allInfo")) || [];
 
-        const updateAllInfoForRemove = allInfo.map((info) => {
-          if (info.userId === userId && info.itemIds === action.payload) {
-            if (info.count > 1) {
-              info.count -= 1;
-            }
-            else {
-              return null;//when last item then remove to ui
-            }
-          }
-          return info;
-        }).filter(Boolean);
-        localStorage.setItem("allInfo", JSON.stringify(updateAllInfoForRemove));
+        // const updateAllInfoForRemove = allInfo.map((info) => {
+        //   if (info.userId === userId && info.itemIds === action.payload) {
+        //     if (info.count > 1) {
+        //       info.count -= 1;
+        //     }
+        //     else {
+        //       return null;//when last item then remove to ui
+        //     }
+        //   }
+        //   return info;
+        // }).filter(Boolean);
+        // localStorage.setItem("allInfo", JSON.stringify(updateAllInfoForRemove));
       }
     },
 
